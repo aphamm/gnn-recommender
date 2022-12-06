@@ -1,15 +1,10 @@
 import argparse
-import json
-import random
-import numpy as np
 import os
+import json
 import snap
-from tqdm import tqdm
 import torch
 from torch_geometric.data import Data
-
-random.seed(5)
-np.random.seed(5)
+from tqdm import tqdm
 
 def parseArgs():
     '''
@@ -137,10 +132,11 @@ def saveObject(data, p_meta, s_meta, num_playlists, num_songs, num_edges, K, N):
 
     cwd = os.getcwd()
     dir = os.path.join(cwd, 'data')
-
+    if not os.path.exists(dir):
+        os.makedirs(dir)
     torch.save(data, os.path.join(dir, 'data_object.pt'))
     dataset = {'num_playlists': num_playlists, 'num_nodes': num_playlists + num_songs, 'kcore_value_k': K, 'num_spotify_files_used': N, 'num_edges_directed': 2 * num_edges, 'num_edges_undirected': num_edges}
-    with open(os.path.join(dir, 'dataset_stats.json'), 'w') as f:
+    with open(os.path.join(dir, 'graph_info.json'), 'w') as f:
         json.dump(dataset, f)
     with open(os.path.join(dir, 'playlist_info.json'), 'w') as f:
         json.dump(p_meta, f)
